@@ -1,0 +1,134 @@
+---
+interface Props {
+  align?: "left" | "right";
+  logo?: string;
+  logoAlt?: string;
+  position?: "fixed" | "relative" | "static";
+  background?: string;
+}
+
+const {
+  align = "left",
+  logo,
+  logoAlt = "Logo",
+  position = "fixed",
+  background = "rgba(0, 0, 0, 0.85)",
+} = Astro.props;
+
+const navLinks = [
+  { label: "Home",      href: "/" },
+  { label: "About",     href: "/about" },
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "Contact",   href: "/contact" },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav style={`position: ${position}; background-color: ${background};`}>
+  <div class={`nav-inner ${align === "right" ? "align-right" : "align-left"}`}>
+    {logo && (
+      <a href="/" class="logo">
+        <img src={logo} alt={logoAlt} />
+      </a>
+    )}
+    <ul>
+      {navLinks.map(link => (
+        <li>
+          <a             
+            href={link.href}
+            class={currentPath === link.href ? "active" : ""}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+<style>
+  nav {
+    /* position and background-color come from inline style prop */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0 2.5rem;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #222;
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .nav-inner.align-left {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .nav-inner.align-right {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+    padding: 0.75rem 0;
+    flex-shrink: 0;
+  }
+
+  .logo:hover {
+    background-color: transparent;
+    border-bottom: none;
+  }
+
+  .logo img {
+    height: 2rem;
+    width: auto;
+    display: block;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+  }
+
+  a {
+    display: block;
+    padding: 1.1rem 1rem;
+    font-family: "Inter", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #888;
+    border-bottom: 2px solid transparent;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  a:hover {
+    color: #fff;
+    border-bottom-color: #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  a.active {
+    color: #fff;
+    border-bottom-color: #fff;
+  }
+</style>

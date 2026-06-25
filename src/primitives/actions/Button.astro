@@ -1,0 +1,231 @@
+---
+interface Props {
+  label?: string;
+  variant?: "default" | "primary" | "warning" | "danger" | "subtle" | "link";
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  selected?: boolean;
+  loading?: boolean;
+  fullWidth?: boolean;
+  href?: string;
+  iconBefore?: string;
+  iconAfter?: string;
+  spacing?: "default" | "compact" | "none";
+}
+
+const {
+  label,
+  variant = "default",
+  size = "md",
+  disabled = false,
+  selected = false,
+  loading = false,
+  fullWidth = false,
+  href,
+  iconBefore,
+  iconAfter,
+  spacing = "default",
+} = Astro.props;
+
+const isDisabled = disabled || loading;
+const Tag = href && !isDisabled ? 'a' : 'button';
+
+const classes = [
+  'mmui-btn',
+  `mmui-btn--${variant}`,
+  `mmui-btn--${size}`,
+  `mmui-btn--spacing-${spacing}`,
+  selected  && 'mmui-btn--selected',
+  loading   && 'mmui-btn--loading',
+  fullWidth && 'mmui-btn--full-width',
+  isDisabled && 'mmui-btn--disabled',
+].filter(Boolean).join(' ');
+---
+
+<Tag
+  class={classes}
+  href={Tag === 'a' ? href : undefined}
+  disabled={Tag === 'button' && isDisabled ? true : undefined}
+  aria-disabled={isDisabled ? 'true' : undefined}
+  aria-pressed={selected ? 'true' : undefined}
+  aria-busy={loading ? 'true' : undefined}
+>
+  {loading && (
+    <span class="mmui-btn__spinner" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="28" stroke-dashoffset="10" />
+      </svg>
+    </span>
+  )}
+
+  {!loading && iconBefore && (
+    <span class="mmui-btn__icon mmui-btn__icon--before" aria-hidden="true">
+      <Fragment set:html={iconBefore} />
+    </span>
+  )}
+
+  {label && <span class="mmui-btn__label">{label}</span>}
+  <slot />
+
+  {!loading && iconAfter && (
+    <span class="mmui-btn__icon mmui-btn__icon--after" aria-hidden="true">
+      <Fragment set:html={iconAfter} />
+    </span>
+  )}
+</Tag>
+
+<style>
+  /* ── Base ── */
+  .mmui-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition:
+      background-color 0.1s ease,
+      color 0.1s ease,
+      box-shadow 0.1s ease;
+    user-select: none;
+    outline: none;
+  }
+
+  .mmui-btn:focus-visible {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #388bff;
+  }
+
+  /* ── Spacing ── */
+  .mmui-btn--spacing-default { padding: 0 0.75rem; height: 2rem; }
+  .mmui-btn--spacing-compact  { padding: 0 0.5rem;  height: 1.5rem; }
+  .mmui-btn--spacing-none     { padding: 0;          height: auto; }
+
+  /* ── Sizes ── */
+  .mmui-btn--sm { font-size: 0.75rem;  height: 1.5rem; padding: 0 0.5rem; }
+  .mmui-btn--md { font-size: 0.875rem; height: 2rem;   padding: 0 0.75rem; }
+  .mmui-btn--lg { font-size: 1rem;     height: 2.5rem; padding: 0 1rem; }
+
+  /* ── Full width ── */
+  .mmui-btn--full-width {
+    width: 100%;
+    display: flex;
+  }
+
+  /* ── Variant: default ── */
+  .mmui-btn--default {
+    background-color: #091e420f;
+    color: #172b4d;
+  }
+  .mmui-btn--default:hover  { background-color: #091e4224; }
+  .mmui-btn--default:active { background-color: #091e424f; }
+
+  /* ── Variant: primary ── */
+  .mmui-btn--primary {
+    background-color: #0052cc;
+    color: #fff;
+  }
+  .mmui-btn--primary:hover  { background-color: #0065ff; }
+  .mmui-btn--primary:active { background-color: #0747a6; }
+
+  /* ── Variant: warning ── */
+  .mmui-btn--warning {
+    background-color: #ffab00;
+    color: #172b4d;
+  }
+  .mmui-btn--warning:hover  { background-color: #ffc400; }
+  .mmui-btn--warning:active { background-color: #ff8b00; }
+
+  /* ── Variant: danger ── */
+  .mmui-btn--danger {
+    background-color: #de350b;
+    color: #fff;
+  }
+  .mmui-btn--danger:hover  { background-color: #ff5630; }
+  .mmui-btn--danger:active { background-color: #bf2600; }
+
+  /* ── Variant: subtle ── */
+  .mmui-btn--subtle {
+    background-color: transparent;
+    color: #172b4d;
+  }
+  .mmui-btn--subtle:hover  { background-color: #091e420f; }
+  .mmui-btn--subtle:active { background-color: #091e4224; }
+
+  /* ── Variant: link ── */
+  .mmui-btn--link {
+    background-color: transparent;
+    color: #0052cc;
+    padding: 0;
+    height: auto;
+    border-radius: 0;
+  }
+  .mmui-btn--link:hover  { color: #0065ff; text-decoration: underline; }
+  .mmui-btn--link:active { color: #0747a6; }
+
+  /* ── Selected state ── */
+  .mmui-btn--selected,
+  .mmui-btn--default.mmui-btn--selected {
+    background-color: #0052cc;
+    color: #fff;
+  }
+  .mmui-btn--selected:hover {
+    background-color: #0065ff;
+  }
+
+  /* ── Disabled state ── */
+  .mmui-btn--disabled,
+  .mmui-btn:disabled {
+    background-color: #091e420f;
+    color: #091e424f;
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+  }
+
+  /* <a> tags can't use :disabled so we re-enable pointer-events for cursor */
+  a.mmui-btn--disabled {
+    pointer-events: all;
+    cursor: not-allowed;
+  }
+
+  /* ── Loading state ── */
+  .mmui-btn--loading {
+    cursor: wait;
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  .mmui-btn__spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    animation: mmui-spin 0.8s linear infinite;
+  }
+
+  @keyframes mmui-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* ── Icons ── */
+  .mmui-btn__icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .mmui-btn__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>

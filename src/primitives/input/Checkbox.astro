@@ -1,0 +1,39 @@
+---
+interface Props {
+  label?: string;
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  selected?: boolean;
+  loading?: boolean;
+  iconBefore?: string;
+  iconAfter?: string;
+}
+
+const {
+  label,
+  size = "md",
+  disabled = false,
+  selected = false,
+  loading = false,
+  iconBefore,
+  iconAfter,
+} = Astro.props;
+
+const isDisabled = disabled || loading;
+
+const classes = [
+  'mmui-btn',
+  `mmui-btn--${size}`,
+  selected  && 'mmui-btn--selected',
+  loading   && 'mmui-btn--loading',
+  isDisabled && 'mmui-btn--disabled',
+].filter(Boolean).join(' ');
+---
+
+<button>
+    class={classes}
+    disabled={isDisabled ? true : undefined}
+    aria-disabled={isDisabled ? 'true' : undefined}
+    aria-pressed={selected ? 'true' : undefined}
+    aria-busy={loading ? 'true' : undefined}
+</button>
